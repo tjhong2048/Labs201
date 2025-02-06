@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 5
+
+char *history[MAX];
+int history_count = 0;
+
+char *get_input() {
+  char *buffer = NULL;
+  size_t buffsize = 0;
+  printf("Enter input: ");
+  size_t len = getline(&buffer, buffsize, stdin);
+  if (len == -1) {
+    exit(1);
+  }
+
+  buffer[len - 1] = '\0';
+  return buffer;
+}
+
+void remove_prev() {
+  if (history_count > 0) {
+    free(history[0]);
+    for (int i = 1; i < history_count; i++) {
+      history[i - 1] = history[i];
+    }
+    history_count--;
+  }
+}
+
+void add_input(char *input) {
+  if (history_count >= MAX) {
+    remove_prev();
+  }
+  history[history_count] = input;
+  history_count++;
+}
+
+int main() {
+  while (1) {
+    char *input = get_input();
+    add_input(input);
+    if (strcmp(input, "print") == 0) {
+      for (int i = 0; i < history_count; i++) {
+        printf("%s\n", history[i]);
+      }
+    }
+    return 0;
+  }
+}
