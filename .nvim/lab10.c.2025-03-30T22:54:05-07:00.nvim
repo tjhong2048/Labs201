@@ -14,7 +14,7 @@ accepts clients while run is true
 stores messages
 
 2. How are received messages stored?
-linked list
+linked list 
 
 3. What does `main()` do with the received messages?
 waits until all messages are recieved

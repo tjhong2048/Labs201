@@ -1,38 +1,3 @@
-/*
-Questions to answer at top of server.c:
-(You should not need to change client.c)
-Understanding the Client:
-1. How is the client sending data to the server? What protocol?
-SOCK_STREAM, TCP
-
-2. What data is the client sending to the server?
-five messages to messages array
-
-Understanding the Server:
-1. Explain the argument that the `run_acceptor` thread is passed as an argument.
-accepts clients while run is true
-stores messages
-
-2. How are received messages stored?
-linked list
-
-3. What does `main()` do with the received messages?
-waits until all messages are recieved
-
-4. How are threads used in this sample code?
-new thread for each client
-
-Explain the use of non-blocking sockets in this lab.
-How are sockets made non-blocking?
-using fcntl
-
-What sockets are made non-blocking?
-sfd and cfd
-
-Why are these sockets made non-blocking? What purpose does it serve?
-avoids blocking accept() and read()
-*/
-
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -223,9 +188,10 @@ static void *run_client(void *args) {
 
       struct list_handle *list_handle = cargs->list_handle;
       // TODO: Safely use add_to_list to add new_node to the list
-      pthread_mutex_lock(cargs->list_lock);
+      pthread_mutex_lock(cargs->list_lock); 
       { add_to_list(list_handle, new_node); }
-      pthread_mutex_unlock(cargs->list_lock);
+      pthread_mutex_unlock(cargs->list_lock); 
+
     }
   }
 
@@ -263,10 +229,9 @@ static void *run_acceptor(void *args) {
         num_clients++;
 
         // TODO: Create a new thread to handle the client
-        pthread_create(&threads[num_clients], NULL, run_client,
-                       &client_args[num_clients]);
-        num_clients++;
-        printf("Client connected!\n");
+        pthread_create(&threads[num_clients], NULL, run_client, &client_args[num_clients]); 
+        num_clients++; 
+        printf("Client connected!\n"); 
       }
     }
   }
@@ -277,9 +242,9 @@ static void *run_acceptor(void *args) {
   for (int i = 0; i < num_clients; i++) {
     // TODO: Set flag to stop the client thread
     // TODO: Wait for the client thread and close its socket
-    client_args[i].run = false;
-    pthread_join(threads[i], NULL);
-    close(client_args[i].cfd);
+    client_args[i].run = false; 
+    pthread_join(threads[i], NULL); 
+    close(client_args[i].cfd); 
   }
 
   if (close(sfd) == -1) {
@@ -310,13 +275,13 @@ int main() {
   pthread_create(&acceptor_thread, NULL, run_acceptor, &aargs);
 
   // TODO: Wait until enough messages are received
-  bool doneWaiting = false;
+  bool doneWaiting = false; 
   while (!doneWaiting) {
-    pthread_mutex_lock(&list_mutex);
+    pthread_mutex_lock(&list_mutex); 
     if (list_handle.count >= MAX_CLIENTS * NUM_MSG_PER_CLIENT) {
-      doneWaiting = true;
+      doneWaiting = true; 
     }
-    pthread_mutex_unlock(&list_mutex);
+    pthread_mutex_unlock(&list_mutex); 
   }
 
   aargs.run = false;
