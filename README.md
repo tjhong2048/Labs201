@@ -1,3 +1,3 @@
 # Labs201
 
-lab for cmpt 201
+Lab Material for CMPT 201
